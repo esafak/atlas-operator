@@ -1,0 +1,16 @@
+.github/workflows/integration.yaml
+  h_ea91e2db23540f 29-30
+cmd/main.go
+  h_ea91e2db23540f 21,25,284,286,288-290,292
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "77ad639f5f5a6d3e53a69024552ef22849fca026",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
