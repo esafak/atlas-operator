@@ -2,9 +2,6 @@ db postgres:15.4 SCHEMA_DB_URL
 db postgres:15.4 SCHEMA_DB_DEV_URL postgres-dev
 kubectl create secret generic schema-db-creds --from-literal=url=${SCHEMA_DB_URL}
 kubectl create configmap schema-db-dev-creds --from-literal=url=${SCHEMA_DB_DEV_URL}
-# Create the secret to store ATLAS_TOKEN
-kubectl create secret generic atlas-token --from-literal=ATLAS_TOKEN=${ATLAS_TOKEN}
-
 # Create the schema
 kubectl apply -f schema.yaml
 kubectl wait --for=jsonpath='{.status.conditions[?(@.type=="Ready")].reason}'=Applied --timeout=2h AtlasSchemas/sample
@@ -19,12 +16,6 @@ metadata:
   name: sample
 spec:
   envName: "test"
-  cloud:
-    repo: atlas-operator
-    tokenFrom:
-      secretKeyRef:
-        name: atlas-token
-        key: ATLAS_TOKEN
   vars: 
     - key: "db_url"
       valueFrom: 

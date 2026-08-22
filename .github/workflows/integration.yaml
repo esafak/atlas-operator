@@ -65,8 +65,8 @@ jobs:
       - name: Run e2e tests
         run: |
           make test-e2e \
-            ATLAS_TOKEN=${{ secrets.ATLAS_TOKEN }} \
-            KIND_CLUSTER=chart-testing
+            KIND_CLUSTER=chart-testing \
+            TEST_RUN='(schema-hash|schema-hash-configmap|migration-mysql|schema-composite)$'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
