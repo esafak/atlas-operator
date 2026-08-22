@@ -18,9 +18,11 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -29,7 +31,6 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
-	"ariga.io/atlas/atlasexec"
 	"golang.org/x/mod/semver"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -280,15 +281,15 @@ func parseNamespaces(s string) []string {
 
 // atlasVersion runs `atlas version` and returns its string representation.
 func atlasVersion(ctx context.Context) (string, error) {
-	c, err := atlasexec.NewClient(os.TempDir(), "atlas")
+	out, err := exec.CommandContext(ctx, "atlas", "version").CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("creating atlas client: %w", err)
+		return "", fmt.Errorf("running atlas version: %w: %s", err, strings.TrimSpace(string(out)))
 	}
-	v, err := c.Version(ctx)
-	if err != nil {
-		return "", fmt.Errorf("running atlas version: %w", err)
+	version := strings.TrimSpace(string(out))
+	if version == "" {
+		return "", errors.New("atlas version returned empty output")
 	}
-	return v.String(), nil
+	return version, nil
 }
 
 // checkForUpdate checks for version updates and security advisories for the Atlas Operator.
