@@ -184,7 +184,10 @@ const (
 	DriverSpanner     Driver = "spanner"
 	DriverSQLite      Driver = "sqlite"
 	DriverSQLServer   Driver = "sqlserver"
-	DriverYSQL        Driver = "ysql"
+	// DriverTiDB is an operator-only identity. Atlas receives TiDB URLs as
+	// mysql URLs because TiDB uses Atlas's MySQL driver.
+	DriverTiDB Driver = "tidb"
+	DriverYSQL Driver = "ysql"
 )
 
 // DriverBySchema returns the driver from the given schema.
@@ -199,6 +202,8 @@ func DriverBySchema(schema string) (Driver, error) {
 		return DriverSQLite, nil
 	case "mysql":
 		return DriverMySQL, nil
+	case "tidb":
+		return DriverTiDB, nil
 	case "mariadb", "maria":
 		return DriverMariaDB, nil
 	case "postgres", "postgresql":
@@ -241,7 +246,7 @@ func (d Driver) SchemaBound(u url.URL) (bool, error) {
 	case DriverPostgres, DriverRedshift,
 		DriverCockroachDB, DriverDSQL, DriverYSQL: // PG-like
 		return u.Query().Get("search_path") != "", nil
-	case DriverMySQL, DriverMariaDB, DriverClickHouse: // MySQL-like
+	case DriverMySQL, DriverMariaDB, DriverTiDB, DriverClickHouse: // MySQL-like
 		return u.Path != "", nil
 	case DriverSQLServer, DriverOracle:
 		m := u.Query().Get("mode")
@@ -253,4 +258,30 @@ func (d Driver) SchemaBound(u url.URL) (bool, error) {
 	default:
 		return false, fmt.Errorf("unsupported driver %q", d)
 	}
+}
+
+// NormalizeAtlasURL converts the operator's tidb URL alias to the mysql URL
+// understood by Atlas. The returned URL is a copy; credentials, paths,
+// modifiers, and query parameters are retained.
+func NormalizeAtlasURL(u *url.URL) *url.URL {
+	if u == nil {
+		return nil
+	}
+	copy := *u
+	p := strings.SplitN(copy.Scheme, "+", 2)
+	if strings.EqualFold(p[0], "tidb") {
+		p[0] = "mysql"
+		copy.Scheme = strings.Join(p, "+")
+	}
+	return &copy
+}
+
+// NormalizeAtlasURLString is NormalizeAtlasURL for URL strings. Non-TiDB
+// schemes are returned unchanged.
+func NormalizeAtlasURLString(raw string) (string, error) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", err
+	}
+	return NormalizeAtlasURL(u).String(), nil
 }

@@ -14,52 +14,67 @@
 
 name: CD - Image Canary Release
 on:
-  schedule:
-    - cron: '0 7 * * 0-4'
+  push:
+    branches:
+      - dev
+    paths:
+      - 'Dockerfile'
+      - 'Makefile'
+      - 'cmd/**'
+      - 'api/**'
+      - 'internal/**'
+      - 'charts/**'
+      - '.github/workflows/cd-image-canary-release.yaml'
 jobs:
   push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@885d1462b80bc1c1c7f0b00334ad271f09369c55 # v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # v2
-      - name: Login to DockerHub
+      - name: Login to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Fetch Atlas version
-        id: atlas
-        run: |
-          # All distributions are built from the same version
-          # so we only need to fetch it once.
-          echo "version=$(curl -s https://release.ariga.io/atlas/atlas-linux-amd64-latest.version)" >> $GITHUB_OUTPUT
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175 # v4
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/atlas-operator
+          images: ghcr.io/${{ github.repository_owner }}/atlas-operator
           tags: |
+            type=raw,value=dev
             type=schedule
             type=sha
             type=ref,event=branch
             type=semver,pattern={{version}}
           labels: |
-            io.ariga.atlas.version=${{ steps.atlas.outputs.version }}
+            io.ariga.atlas.version=dev-01c1774a6484596092eed387d7cdda9355e5a896
+            io.ariga.atlas.channel=mutable-test
             org.opencontainers.image.title=atlas-operator
             org.opencontainers.image.description=Atlas Operator
             org.opencontainers.image.url=https://atlasgo.io
             org.opencontainers.image.vendor=Ariga
-            org.opencontainers.image.source=https://github.com/ariga/atlas-operator/blob/master/Dockerfile
+            org.opencontainers.image.source=https://github.com/esafak/atlas-operator/blob/dev/Dockerfile
       - name: Build and push
         uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9 # v4
         with:
           context: .
           build-args: |
-            ATLAS_VERSION=extended-latest
-            OPERATOR_VERSION=v${{ steps.meta.outputs.version }}
+            ATLAS_REPOSITORY=esafak/atlas
+            ATLAS_RELEASE=dev
+            ATLAS_COMMIT=01c1774a6484596092eed387d7cdda9355e5a896
+            ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
+            ATLAS_AMD64_SHA256=c586d2c3d2014020a83c820637e9f5e9855d69835564b454a33ca7f6577aaa5c
+            ATLAS_ARM64_SHA256=b860900e2f9640e8305882d0b5e812af7430a91332f48ff70a054c3564f345ab
+            OPERATOR_VERSION=dev-${{ github.sha }}
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}

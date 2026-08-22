@@ -813,6 +813,14 @@ func (d *managedData) render(w io.Writer) error {
 	if schema == nil && b.GetAttribute("src") == nil {
 		return errors.New("the desired state is not set")
 	}
+	isTiDB := false
+	if d.URL != nil {
+		drv, _ := dbv1alpha1.DriverBySchema(d.URL.Scheme)
+		isTiDB = drv == dbv1alpha1.DriverTiDB
+	}
+	if err := normalizeAtlasURLs(f, d.EnvName, isTiDB); err != nil {
+		return err
+	}
 	if _, err := f.WriteTo(w); err != nil {
 		return err
 	}

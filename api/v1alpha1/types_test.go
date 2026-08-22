@@ -261,6 +261,22 @@ func TestCredentials_URL(t *testing.T) {
 	}
 }
 
+func TestTiDBURLRouting(t *testing.T) {
+	t.Run("driver and schema bound", func(t *testing.T) {
+		drv, err := v1alpha1.DriverBySchema("tidb+unix")
+		require.NoError(t, err)
+		require.Equal(t, v1alpha1.DriverTiDB, drv)
+		bound, err := drv.SchemaBound(url.URL{Scheme: "tidb", Path: "/app"})
+		require.NoError(t, err)
+		require.True(t, bound)
+	})
+	t.Run("normalizes only the Atlas scheme", func(t *testing.T) {
+		got, err := v1alpha1.NormalizeAtlasURLString("tidb+unix://user:pass@host/db?sslmode=disable")
+		require.NoError(t, err)
+		require.Equal(t, "mysql+unix://user:pass@host/db?sslmode=disable", got)
+	})
+}
+
 func TestDriverBySchema_YSQL(t *testing.T) {
 	drv, err := v1alpha1.DriverBySchema("ysql")
 	require.NoError(t, err)

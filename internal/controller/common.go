@@ -30,6 +30,8 @@ import (
 
 	"ariga.io/atlas/atlasexec"
 	"ariga.io/atlas/sql/migrate"
+	dbv1alpha1 "github.com/ariga/atlas-operator/api/v1alpha1"
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
@@ -127,6 +129,44 @@ func getConfigMap(ctx context.Context, r client.Reader, ns string, ref *corev1.L
 		return nil, transient(err)
 	}
 	return cfg, nil
+}
+
+// normalizeAtlasURLs rewrites literal target and dev URLs in rendered config.
+// TiDB is an operator routing alias; Atlas must only ever see mysql URLs.
+func normalizeAtlasURLs(f *hclwrite.File, envName string, strict bool) error {
+	env := searchBlock(f.Body(), hclwrite.NewBlock("env", []string{envName}))
+	if env == nil {
+		return nil
+	}
+	for _, name := range []string{"url", "dev"} {
+		attr := env.Body().GetAttribute(name)
+		if attr == nil {
+			continue
+		}
+		expr, diags := hclsyntax.ParseExpression(attr.Expr().BuildTokens(nil).Bytes(), "generated.hcl", hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			if strict {
+				return fmt.Errorf("%s URL must be a literal when using the tidb:// operator alias", name)
+			}
+			continue
+		}
+		v, diags := expr.Value(nil)
+		if diags.HasErrors() || !v.IsKnown() || v.Type() != cty.String {
+			if strict {
+				return fmt.Errorf("%s URL must be a literal when using the tidb:// operator alias", name)
+			}
+			continue
+		}
+		raw := v.AsString()
+		normalized, err := dbv1alpha1.NormalizeAtlasURLString(raw)
+		if err != nil {
+			return fmt.Errorf("invalid %s URL: %w", name, err)
+		}
+		if normalized != raw {
+			env.Body().SetAttributeValue(name, cty.StringVal(normalized))
+		}
+	}
+	return nil
 }
 
 // getSecretValue gets the value of the given secret key selector.

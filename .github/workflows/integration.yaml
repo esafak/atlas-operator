@@ -16,7 +16,7 @@ name: Integration Tests
 on:
   push:
     branches:
-      - master
+      - dev
   pull_request:
 jobs:
   unit:
@@ -26,8 +26,13 @@ jobs:
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version-file: "go.mod"
-      - name: Install Atlas CLI
-        uses: ariga/setup-atlas@747818cc9a4d896aae962ffdde7015337930a4c9 # master
+      - name: Install pinned Atlas CLI
+        run: |
+          set -eux
+          url=https://github.com/esafak/atlas/releases/download/dev/atlas-linux-amd64
+          curl -fsSL "$url" -o /tmp/atlas
+          echo 'c586d2c3d2014020a83c820637e9f5e9855d69835564b454a33ca7f6577aaa5c  /tmp/atlas' | sha256sum -c -
+          sudo install -m 0755 /tmp/atlas /usr/local/bin/atlas
       - name: Generate
         run: |
           make cli-gen

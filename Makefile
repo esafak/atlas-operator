@@ -1,4 +1,9 @@
-ATLAS_VERSION=$(shell curl -s https://release.ariga.io/atlas/atlas-linux-amd64-latest.version)
+ATLAS_REPOSITORY ?= esafak/atlas
+ATLAS_RELEASE ?= dev
+ATLAS_COMMIT ?= 01c1774a6484596092eed387d7cdda9355e5a896
+ATLAS_ASSET_BASE ?= https://github.com/$(ATLAS_REPOSITORY)/releases/download/$(ATLAS_RELEASE)
+ATLAS_AMD64_SHA256 ?= c586d2c3d2014020a83c820637e9f5e9855d69835564b454a33ca7f6577aaa5c
+ATLAS_ARM64_SHA256 ?= b860900e2f9640e8305882d0b5e812af7430a91332f48ff70a054c3564f345ab
 
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
@@ -124,7 +129,11 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: ## Build docker image with the manager.
-	$(CONTAINER_TOOL) build --build-arg ATLAS_VERSION=${ATLAS_VERSION} -t ${IMG} .
+	$(CONTAINER_TOOL) build \
+		--build-arg ATLAS_REPOSITORY=$(ATLAS_REPOSITORY) --build-arg ATLAS_RELEASE=$(ATLAS_RELEASE) \
+		--build-arg ATLAS_COMMIT=$(ATLAS_COMMIT) --build-arg ATLAS_ASSET_BASE=$(ATLAS_ASSET_BASE) \
+		--build-arg ATLAS_AMD64_SHA256=$(ATLAS_AMD64_SHA256) --build-arg ATLAS_ARM64_SHA256=$(ATLAS_ARM64_SHA256) \
+		-t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -136,15 +145,19 @@ docker-push: ## Push docker image with the manager.
 # - have enabled BuildKit. More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 # - be able to push the image to your registry (i.e. if you do not set a valid value via IMG=<myregistry/image:<tag>> then the export will fail)
 # To adequately provide solutions that are compatible with multiple platforms, you should consider using this option.
-PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
+PLATFORMS ?= linux/amd64,linux/arm64
 .PHONY: docker-buildx
 docker-buildx: ## Build and push docker image for the manager for cross-platform support
 	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
 	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
 	- $(CONTAINER_TOOL) buildx create --name project-v4-builder
 	$(CONTAINER_TOOL) buildx use project-v4-builder
-	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --build-arg ATLAS_VERSION=${ATLAS_VERSION} --tag ${IMG} -f Dockerfile.cross .
-	- $(CONTAINER_TOOL) buildx rm project-v4-builder
+	$(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) \
+		--build-arg ATLAS_REPOSITORY=$(ATLAS_REPOSITORY) --build-arg ATLAS_RELEASE=$(ATLAS_RELEASE) \
+		--build-arg ATLAS_COMMIT=$(ATLAS_COMMIT) --build-arg ATLAS_ASSET_BASE=$(ATLAS_ASSET_BASE) \
+		--build-arg ATLAS_AMD64_SHA256=$(ATLAS_AMD64_SHA256) --build-arg ATLAS_ARM64_SHA256=$(ATLAS_ARM64_SHA256) \
+		--tag ${IMG} -f Dockerfile.cross .
+	$(CONTAINER_TOOL) buildx rm project-v4-builder
 	rm Dockerfile.cross
 
 .PHONY: build-installer

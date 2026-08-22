@@ -40,13 +40,37 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     go build -ldflags "-X 'main.version=${OPERATOR_VERSION}'" \
     -o manager -a cmd/main.go
 
-FROM alpine:3.23 as atlas
-RUN apk add --no-cache curl
-ARG ATLAS_VERSION=extended-latest
-ENV ATLAS_VERSION=${ATLAS_VERSION}
-RUN curl -sSf https://atlasgo.sh | sh
+FROM golang:1.26.6-bookworm AS atlas
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/* && \
+    go install github.com/sigstore/cosign/v2/cmd/cosign@v2.6.3
+ARG ATLAS_REPOSITORY=esafak/atlas
+ARG ATLAS_RELEASE=dev
+ARG ATLAS_COMMIT=01c1774a6484596092eed387d7cdda9355e5a896
+ARG ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
+ARG ATLAS_AMD64_SHA256=c586d2c3d2014020a83c820637e9f5e9855d69835564b454a33ca7f6577aaa5c
+ARG ATLAS_ARM64_SHA256=b860900e2f9640e8305882d0b5e812af7430a91332f48ff70a054c3564f345ab
+ARG TARGETARCH
+RUN set -eux; \
+    case "${TARGETARCH}" in amd64) sha="${ATLAS_AMD64_SHA256}";; arm64) sha="${ATLAS_ARM64_SHA256}";; *) echo "unsupported TARGETARCH=${TARGETARCH}; Atlas publishes only amd64 and arm64" >&2; exit 1;; esac; \
+    asset="atlas-linux-${TARGETARCH}"; \
+    for attempt in 1 2 3 4 5; do \
+      curl -fsSL --retry 2 "${ATLAS_ASSET_BASE}/${asset}" -o "/tmp/${asset}" && \
+      curl -fsSL --retry 2 "${ATLAS_ASSET_BASE}/${asset}.bundle" -o "/tmp/${asset}.bundle" && break; \
+      sleep $((attempt * 2)); \
+    done; \
+    test -s "/tmp/${asset}" || { echo "Atlas download failed after retries" >&2; exit 1; }; \
+    test -s "/tmp/${asset}.bundle" || { echo "Atlas bundle download failed after retries" >&2; exit 1; }; \
+    echo "${sha}  /tmp/${asset}" | sha256sum -c -; \
+    /go/bin/cosign verify-blob --bundle "/tmp/${asset}.bundle" \
+      --certificate-identity-regexp "^https://github\.com/${ATLAS_REPOSITORY}/\.github/workflows/cli-prerelease_oss\.yaml@refs/heads/${ATLAS_RELEASE}$" \
+      --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+      "/tmp/${asset}"; \
+    install -m 0755 "/tmp/${asset}" /usr/local/bin/atlas; \
+    atlas version | grep -F "development"; \
+    rm -f /tmp/${asset} "/tmp/${asset}.bundle"
 
-FROM alpine:3.23
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /
 COPY --from=builder /workspace/manager .
 COPY --from=atlas /usr/local/bin/atlas /usr/local/bin

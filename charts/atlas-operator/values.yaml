@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: arigaio/atlas-operator
+  repository: ghcr.io/esafak/atlas-operator
   pullPolicy: IfNotPresent
   tag: ""
 
@@ -119,4 +119,3 @@ extraVolumeMounts: []
 #   - name: extra-volume
 #     mountPath: /extra-volume
 #     readOnly: true
-

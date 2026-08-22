@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "master"
+      - "dev"
 
 jobs:
   helm-test:

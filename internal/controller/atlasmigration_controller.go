@@ -394,6 +394,13 @@ func (s *migrationRun) whoAmI(ctx context.Context) error {
 		}
 		return nil
 	case err != nil:
+		// The TiDB test-channel CLI is an OSS build without Atlas Cloud
+		// commands. A local migration must not fail merely because the
+		// optional cloud probe is unavailable; cloud-backed configurations
+		// still fail explicitly below when they require the command.
+		if s.data.Cloud == nil && strings.Contains(err.Error(), "unknown command") && strings.Contains(err.Error(), "whoami") {
+			return nil
+		}
 		return err
 	default:
 		s.log.Info("the resource is connected to Atlas Cloud", "org", whoami.Org)
@@ -865,6 +872,14 @@ func (d *migrationData) render(w io.Writer) error {
 	case dirAttr != nil:
 	default:
 		return errors.New("migration directory is empty")
+	}
+	isTiDB := false
+	if d.URL != nil {
+		drv, _ := dbv1alpha1.DriverBySchema(d.URL.Scheme)
+		isTiDB = drv == dbv1alpha1.DriverTiDB
+	}
+	if err := normalizeAtlasURLs(f, d.EnvName, isTiDB); err != nil {
+		return err
 	}
 	if _, err := f.WriteTo(w); err != nil {
 		return err
