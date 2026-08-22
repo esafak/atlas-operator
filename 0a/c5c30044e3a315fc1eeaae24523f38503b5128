@@ -1,0 +1,23 @@
+Makefile
+  s_04b070cceb3ae5::t_5328005376a2a7 1-6,132-136,148,155-160,274
+api/v1alpha1/target.go
+  s_04b070cceb3ae5::t_9ea8851010e2eb 187-190,205-206,249,262-287
+api/v1alpha1/types_test.go
+  s_04b070cceb3ae5::t_da5749c180478b 264-279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "0ac5c30044e3a315fc1eeaae24523f38503b5128",
+  "prompts": {},
+  "sessions": {
+    "s_04b070cceb3ae5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fd5d4c02dffepGBHmSGDevldMX",
+        "model": "glm-5.3"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
