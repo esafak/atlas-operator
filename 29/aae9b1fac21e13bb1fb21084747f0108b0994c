@@ -1,0 +1,18 @@
+.github/workflows/cd-image-canary-release.yaml
+  h_ea91e2db23540f 95-98
+.github/workflows/cd-operator-release.yaml
+  h_ea91e2db23540f 175-178
+docs/dev-release-workflow.md
+  h_ea91e2db23540f 52-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "29aae9b1fac21e13bb1fb21084747f0108b0994c",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
