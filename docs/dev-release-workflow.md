@@ -49,6 +49,23 @@ the Dockerfile and Makefile.
    promoted artifact, then verify the published operator image contains the
    promoted CLI.
 
+## Operator versioning
+
+Production operator versions use the upstream operator version as their base
+with a fork-qualified SemVer prerelease suffix. For example:
+
+```text
+upstream: 0.7.33
+fork:     0.7.33-esafak.1
+next:     0.7.33-esafak.2
+```
+
+When the upstream base moves to `0.7.34`, the fork sequence starts at
+`0.7.34-esafak.1`. Do not use a fourth numeric component such as `0.7.33.1`.
+The operator version identifies the chart/image; the embedded Atlas CLI release
+remains independent metadata. Dev artifacts continue to use the mutable `dev`
+tag rather than a production SemVer.
+
 ## Internal support boundary
 
 The internal fork targets local Kubernetes reconciliation for MySQL/MariaDB
