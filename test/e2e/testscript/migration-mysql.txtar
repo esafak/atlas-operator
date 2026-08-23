@@ -1,4 +1,4 @@
-db mysql:latest DB_URL
+db mysql:8.4 DB_URL
 kubectl create secret generic db-creds --from-literal=url=${DB_URL}
 
 # Wait for the first pod created

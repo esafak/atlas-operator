@@ -16,7 +16,7 @@ kubectl apply -f schema.yaml
 kubectl-wait-ready AtlasSchema/mysql
 
 kubectl get -o jsonpath --template='{.status.observed_hash}' AtlasSchema/mysql
-stdout oAoRLC2AXyGha6pKDollSqBB5ovjB\+qK78aAN9dkOow\=
+stdout kC\+XNBT/gtAytAB8q254zXejMQL6ur8cIYbNcGsdnrU\=
 
 # Update the configmap with the new schema
 kubectl create configmap mysql-schema --from-file=./schema-v2 --dry-run=client -o yaml
@@ -29,7 +29,7 @@ kubectl-wait-ready AtlasSchema/mysql
 
 # Hash should be updated
 kubectl get -o jsonpath --template='{.status.observed_hash}' AtlasSchema/mysql
-stdout mlBKa2H4Mt7J8uStzuFj6Ps0XRIB9z3EuZPfOw6BeIA\=
+stdout IOhv8gewOY71QTiLdqf3BSmY3Q1lI907eKEcuCz81ec\=
 
 -- schema-v1/schema.sql --
 create table users (
