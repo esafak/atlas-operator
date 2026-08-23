@@ -1,0 +1,14 @@
+test/e2e/testscript/migration-mysql.txtar
+  h_ea91e2db23540f 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "8f5d002935e5bb79ccbaf1b8161db7cd479a22df",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
