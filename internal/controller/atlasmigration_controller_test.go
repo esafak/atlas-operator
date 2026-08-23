@@ -32,6 +32,7 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/stretchr/testify/require"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -508,6 +509,49 @@ func TestMigration_MigrateDown_Local(t *testing.T) {
 		"Warning ProtectedFlowError allow cannot be true without autoApprove for local migration directory",
 		"Normal Applied Version 1 applied",
 	}, h.events())
+}
+
+func TestMigration_AutomaticDevDBUsesTargetDatabase(t *testing.T) {
+	meta := migrationObjmeta()
+	obj := &dbv1alpha1.AtlasMigration{
+		ObjectMeta: meta,
+		Spec: dbv1alpha1.AtlasMigrationSpec{
+			TargetSpec: dbv1alpha1.TargetSpec{
+				URL: "mysql://root:pass@mysql:3306/myapp",
+			},
+			Dir: dbv1alpha1.Dir{
+				Local: map[string]string{
+					"1.sql":     "CREATE TABLE t1 (id INT);",
+					"atlas.sum": "h1:NIfJIuMahN58AEbN26mlFN1UfIH5YYAPLVish2vrYA=\n1.sql h1:0qg7r5sBBfy1rYGVxtli7zUY58RKN5V9gk8tBlLQVDU=\n",
+				},
+			},
+		},
+		Status: dbv1alpha1.AtlasMigrationStatus{
+			Conditions: []metav1.Condition{
+				{Type: "Ready", Status: metav1.ConditionFalse},
+			},
+		},
+	}
+	mockExec := &mockAtlasExec{}
+	mockExec.whoami.res = &atlasexec.WhoAmI{Org: "my-org"}
+	mockExec.status.res = &atlasexec.MigrateStatus{
+		Current: "1",
+		Applied: []*atlasexec.Revision{{Version: "1"}},
+	}
+	h, reconcile := newRunner(NewAtlasMigrationReconciler, func(cb *fake.ClientBuilder) {
+		cb.WithStatusSubresource(obj).WithObjects(obj)
+	}, mockExec)
+
+	reconcile(obj, func(result ctrl.Result, err error) {
+		require.NoError(t, err)
+		require.Equal(t, ctrl.Result{RequeueAfter: retryDuration}, result)
+
+		key := nameDevDB(obj)
+		deployment := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: key.Name, Namespace: key.Namespace}}
+		h.get(t, deployment)
+		require.Equal(t, "myapp", containerEnv(&deployment.Spec.Template.Spec, "MYSQL_DATABASE"))
+		require.Equal(t, "mysql://root:pass@localhost:3306/myapp", deployment.Spec.Template.Annotations[annoConnTmpl])
+	})
 }
 
 func TestReconcile_Diff(t *testing.T) {

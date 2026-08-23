@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"os"
 	"slices"
+	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -145,7 +146,7 @@ func (r *devDBReconciler) devURL(ctx context.Context, sc client.Object, targetUR
 			if err != nil {
 				return "", fmt.Errorf("failed to determine if target URL is schema bound: %w", err)
 			}
-			podSpec, devURL, err = AutomaticDevDBSpec(drv, schemaBound)
+			podSpec, devURL, err = AutomaticDevDBSpec(targetURL, drv, schemaBound)
 			if err != nil {
 				return "", fmt.Errorf("failed to create dev database spec: %w", err)
 			}
@@ -230,7 +231,7 @@ func deploymentDevDB(key types.NamespacedName, drv dbv1alpha1.Driver, podSpec co
 }
 
 // AutomaticDevDBSpec returns a PodSpec for a development database based on the target URL.
-func AutomaticDevDBSpec(drv dbv1alpha1.Driver, schemaBound bool) (*corev1.PodSpec, string, error) {
+func AutomaticDevDBSpec(targetURL url.URL, drv dbv1alpha1.Driver, schemaBound bool) (*corev1.PodSpec, string, error) {
 	var (
 		user string
 		pass string
@@ -353,7 +354,11 @@ func AutomaticDevDBSpec(drv dbv1alpha1.Driver, schemaBound bool) (*corev1.PodSpe
 			{Name: "MYSQL_ROOT_PASSWORD", Value: pass},
 		}
 		if schemaBound {
-			path = "dev"
+			var err error
+			path, err = targetDatabasePath(targetURL, "MySQL")
+			if err != nil {
+				return nil, "", err
+			}
 			c.Env = append(c.Env, corev1.EnvVar{
 				Name: "MYSQL_DATABASE", Value: path,
 			})
@@ -379,7 +384,11 @@ func AutomaticDevDBSpec(drv dbv1alpha1.Driver, schemaBound bool) (*corev1.PodSpe
 			{Name: "MARIADB_ROOT_PASSWORD", Value: pass},
 		}
 		if schemaBound {
-			path = "dev"
+			var err error
+			path, err = targetDatabasePath(targetURL, "MariaDB")
+			if err != nil {
+				return nil, "", err
+			}
 			c.Env = append(c.Env, corev1.EnvVar{
 				Name: "MARIADB_DATABASE", Value: path,
 			})
@@ -471,6 +480,14 @@ func AutomaticDevDBSpec(drv dbv1alpha1.Driver, schemaBound bool) (*corev1.PodSpe
 		Containers: []corev1.Container{c},
 		Volumes:    volumes,
 	}, conn.String(), nil
+}
+
+func targetDatabasePath(targetURL url.URL, driver string) (string, error) {
+	path := strings.TrimPrefix(targetURL.Path, "/")
+	if path == "" || strings.Contains(path, "/") {
+		return "", fmt.Errorf("devdb: unsupported %s database path %q", driver, targetURL.Path)
+	}
+	return path, nil
 }
 
 func readyPod(pods []corev1.Pod) (*corev1.Pod, error) {

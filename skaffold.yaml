@@ -54,5 +54,6 @@ profiles:
               value: "Y"
             - name: MSSQL_PID
               value: "Developer"
+          allowCustomConfig: true
         valuesFiles:
         - charts/atlas-operator/values.yaml
