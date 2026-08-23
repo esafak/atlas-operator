@@ -1,0 +1,14 @@
+docs/plans/tidb-support.md
+  h_ea91e2db23540f 1-326
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "8ccf265f5a6d5b77fb1d6527a5d8f2778287dfe9",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
