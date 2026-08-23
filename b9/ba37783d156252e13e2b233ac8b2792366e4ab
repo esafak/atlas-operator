@@ -1,0 +1,20 @@
+internal/controller/atlasmigration_controller_test.go
+  h_ea91e2db23540f 35,514-556
+internal/controller/devdb.go
+  h_ea91e2db23540f 24,149,234,357-361,387-391,485-492
+internal/controller/devdb_test.go
+  h_ea91e2db23540f 9-10,13-15,21-23,28-109
+skaffold.yaml
+  h_ea91e2db23540f 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "b9ba37783d156252e13e2b233ac8b2792366e4ab",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
