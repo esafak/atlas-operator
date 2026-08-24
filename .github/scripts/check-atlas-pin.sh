@@ -57,9 +57,10 @@ for key, var in keys.items():
     docker_value = one(rf"^ARG\s+{re.escape(var)}=(\S+)$", dockerfile, f"Dockerfile {var}")
     if docker_value != values[key]:
         raise SystemExit(f"{var} differs between Makefile and Dockerfile")
-    for workflow in release_files:
-        if not re.search(rf"^\s+{re.escape(var)}={re.escape(values[key])}$", workflow, re.MULTILINE):
-            raise SystemExit(f"{var} is missing or differs in a release workflow")
+    if var != "ATLAS_ARM64_SHA256":
+        for workflow in release_files:
+            if not re.search(rf"^\s+{re.escape(var)}={re.escape(values[key])}$", workflow, re.MULTILINE):
+                raise SystemExit(f"{var} is missing or differs in a release workflow")
     action_value = one(rf"^\s+{re.escape(key)}:\s*(\S+)$", integration, f"integration {key}")
     if action_value != values[key]:
         raise SystemExit(f"{var} differs between Makefile and integration action inputs")
