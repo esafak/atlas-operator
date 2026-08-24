@@ -1,0 +1,51 @@
+.github/scripts/check-atlas-pin.sh
+  h_ea91e2db23540f 1-59,61-85
+  h_ea91e2db23540f 60
+mise.toml
+  s_13bfe59ed50769::t_49f4ee6002270b 1-139
+.hadolint.yaml
+  s_13bfe59ed50769::t_92c85fef19addd 1-5
+Makefile
+  h_ea91e2db23540f 246-249
+.github/actions/setup-atlas/action.yml
+  h_ea91e2db23540f 1-62
+hk.pkl
+  s_13bfe59ed50769::t_c8e1248d0d1523 1-46
+.github/workflows/integration.yaml
+  h_ea91e2db23540f 29-42
+.github/actions/setup-atlas/setup-atlas.sh
+  h_ea91e2db23540f 1-54
+mise.lock
+  s_aa772084cba029::t_657f2b25f6e6c2 1-333
+.yamllint
+  s_13bfe59ed50769::t_ab2a94b26928e2 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "1fefda17588f3e54c70b24aa7e86403939b8d416",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_13bfe59ed50769": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb20adcbffetlYBSvIxbIyQ90",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    },
+    "s_aa772084cba029": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb0d92a8ffeqjNMW81qnrUDKP",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
