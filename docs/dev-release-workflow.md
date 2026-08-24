@@ -7,10 +7,15 @@ This repository uses `dev` as the effective main branch. The upstream
 
 1. Push the Atlas fork's `dev` branch. The fork publishes a mutable CLI
    `dev` release containing amd64/arm64 binaries, checksums, and Cosign
-   bundles.
+   bundles. The amd64 binary must be built with CGO enabled because the
+   operator's host-side unit tests exercise SQLite through `go-sqlite3`.
 2. Update the operator's Atlas pin: `ATLAS_RELEASE`, `ATLAS_COMMIT`, and the
    architecture-specific hashes.
-3. Push the operator's `dev` branch. The canary workflow builds and publishes:
+3. Run `make check-atlas-pin` and the integration unit tests before pushing.
+   A new Atlas artifact can change SQL output formatting even when schema
+   behavior is unchanged; inspect such diffs and update narrow test assertions
+   or fixtures when the new output is equivalent.
+4. Push the operator's `dev` branch. The canary workflow builds and publishes:
 
    ```text
    ghcr.io/esafak/atlas-operator:dev
@@ -18,7 +23,7 @@ This repository uses `dev` as the effective main branch. The upstream
 
    The image embeds the verified Atlas CLI artifact and also receives a
    commit-specific image tag.
-4. Internal tracking environments may consume `:dev` with Helm
+5. Internal tracking environments may consume `:dev` with Helm
    `image.pullPolicy: Always`. This tag is mutable and must not be used as a
    production pin.
 
@@ -69,5 +74,7 @@ tag rather than a production SemVer.
 ## Internal support boundary
 
 The internal fork targets local Kubernetes reconciliation for MySQL/MariaDB
-and TiDB. Atlas Cloud CLI workflows and SQLite are outside the validated fork
-image matrix. Existing operator SQLite code is not removed by this boundary.
+and TiDB. SQLite is used by host-side unit tests and therefore requires the
+CGO-enabled amd64 CLI artifact, but SQLite remains outside the validated fork
+production image matrix. Existing operator SQLite code is not removed by this
+boundary.
