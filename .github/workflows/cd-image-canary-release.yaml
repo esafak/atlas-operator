@@ -36,8 +36,6 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@885d1462b80bc1c1c7f0b00334ad271f09369c55 # v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # v2
       - name: Login to GHCR
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
@@ -73,10 +71,11 @@ jobs:
             ATLAS_COMMIT=e54a654eed4814304cf4d119a5e413bc61007755
             ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
             ATLAS_AMD64_SHA256=6edb6029e84f2cc9041d19e3d13e731d450caceff7b787e0922654163d5b73d8
-            ATLAS_ARM64_SHA256=6ab57289c0334100e986089e29ffd2f0d0964167a0b5a9cbcf6163d7a61cf95d
             OPERATOR_VERSION=dev-${{ github.sha }}
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+          cache-from: type=gha,scope=atlas-operator-canary
+          cache-to: type=gha,mode=max,scope=atlas-operator-canary
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true

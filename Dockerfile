@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} CGO_ENABLED=0 \
     go build -ldflags "-X 'main.version=${OPERATOR_VERSION}'" \
-    -o manager -a cmd/main.go
+    -o manager cmd/main.go
 
 FROM golang:1.26.6-bookworm AS atlas
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/* && \
