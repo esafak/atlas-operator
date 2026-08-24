@@ -1,0 +1,14 @@
+docs/dev-release-workflow.md
+  h_ea91e2db23540f 10-11,14-18,26,77-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "af1f178c47dbe181ec027a5418ad9c8dc6cca479",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
