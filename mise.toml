@@ -45,8 +45,7 @@ description = "Lint Go files with golangci-lint"
 usage = '''arg "[files]" help="Go files to lint (defaults to the whole module)" var=#true var_min=0'''
 run = '''
 if [ -n "${usage_files:-}" ]; then
-  eval "set -- $usage_files"
-  golangci-lint run "$@"
+  golangci-lint run --new-from-rev=HEAD
 else
   golangci-lint run
 fi
