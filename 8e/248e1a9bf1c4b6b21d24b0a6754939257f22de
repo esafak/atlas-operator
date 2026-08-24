@@ -1,0 +1,19 @@
+mise.lock
+  s_aa772084cba029::t_657f2b25f6e6c2 1-333
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "8e248e1a9bf1c4b6b21d24b0a6754939257f22de",
+  "prompts": {},
+  "sessions": {
+    "s_aa772084cba029": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb0d92a8ffeqjNMW81qnrUDKP",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
