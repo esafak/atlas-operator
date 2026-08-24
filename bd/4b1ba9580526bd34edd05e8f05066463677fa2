@@ -1,0 +1,14 @@
+Dockerfile
+  h_ea91e2db23540f 69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "bd4b1ba9580526bd34edd05e8f05066463677fa2",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
