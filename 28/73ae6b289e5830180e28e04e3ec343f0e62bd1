@@ -1,0 +1,34 @@
+.github/actions/setup-atlas/action.yml
+  h_ea91e2db23540f 1-62
+.github/actions/setup-atlas/setup-atlas.sh
+  h_ea91e2db23540f 1-54
+.github/scripts/check-atlas-pin.sh
+  h_ea91e2db23540f 1-84
+.github/workflows/integration.yaml
+  h_ea91e2db23540f 29-42
+Makefile
+  h_ea91e2db23540f 246-249
+mise.lock
+  s_aa772084cba029::t_657f2b25f6e6c2 1-333
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "2873ae6b289e5830180e28e04e3ec343f0e62bd1",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_aa772084cba029": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb0d92a8ffeqjNMW81qnrUDKP",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
