@@ -1,0 +1,21 @@
+.hadolint.yaml
+  s_13bfe59ed50769::t_ae684929bad51d 1-14
+mise.toml
+  s_13bfe59ed50769::t_08df470d944075 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "e57ecb843bbd903eef42311dc08f454bf9b05f90",
+  "prompts": {},
+  "sessions": {
+    "s_13bfe59ed50769": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcb20adcbffetlYBSvIxbIyQ90",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
