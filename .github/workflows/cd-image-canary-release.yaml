@@ -54,7 +54,7 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
           labels: |
-            io.ariga.atlas.version=dev-3c09b47a906a3a92a00c43599555bc4a3590dd97
+            io.ariga.atlas.version=dev-11eba1dd5793a6c869e667ffbe8d49fc72c498a4
             io.ariga.atlas.channel=mutable-test
             org.opencontainers.image.title=atlas-operator
             org.opencontainers.image.description=Atlas Operator
@@ -68,9 +68,9 @@ jobs:
           build-args: |
             ATLAS_REPOSITORY=esafak/atlas
             ATLAS_RELEASE=dev
-            ATLAS_COMMIT=3c09b47a906a3a92a00c43599555bc4a3590dd97
+            ATLAS_COMMIT=11eba1dd5793a6c869e667ffbe8d49fc72c498a4
             ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
-            ATLAS_AMD64_SHA256=1f2a3832b895f2c78d32ba3bd38b2f94eab087d2756773813c4b31f89c295a4d
+            ATLAS_AMD64_SHA256=70a5e4b509832d4068ba537d0a1b0c05f302d68c771382613f5676efa9236cda
             OPERATOR_VERSION=dev-${{ github.sha }}
           file: ./Dockerfile
           platforms: linux/amd64
