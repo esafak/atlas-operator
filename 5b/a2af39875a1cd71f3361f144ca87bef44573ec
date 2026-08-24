@@ -1,0 +1,14 @@
+.github/scripts/check-atlas-pin.sh
+  h_ea91e2db23540f 60-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "5ba2af39875a1cd71f3361f144ca87bef44573ec",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
