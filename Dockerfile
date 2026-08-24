@@ -66,7 +66,7 @@ RUN set -eux; \
       --certificate-oidc-issuer https://token.actions.githubusercontent.com \
       "/tmp/${asset}"; \
     install -m 0755 "/tmp/${asset}" /usr/local/bin/atlas; \
-    atlas version | grep -F "development"; \
+    atlas version | grep -Fx "atlas version dev-${ATLAS_COMMIT}"; \
     rm -f /tmp/${asset} "/tmp/${asset}.bundle"
 
 FROM debian:bookworm-slim
