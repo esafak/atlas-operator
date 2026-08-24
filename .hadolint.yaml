@@ -1,0 +1,5 @@
+# Existing image builds intentionally leave package versions to the base image
+# and use a multi-command download pipeline in the builder stage.
+ignored:
+  - DL3008
+  - DL4006

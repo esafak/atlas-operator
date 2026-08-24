@@ -1,0 +1,139 @@
+min_version = "2026.8.0"
+
+[tools]
+actionlint = "1.7.12"
+golangci-lint = "2.13.1"
+hadolint = "2.15.1"
+helm = "4.2.3"
+hk = "1.55.0"
+ruff = "0.16.4"
+shellcheck = "0.11.0"
+shfmt = "3.13.1"
+yamllint = "1.38.0"
+
+[settings]
+lockfile = true
+
+[tasks.lint]
+description = "Run all repository linters"
+depends = [
+  "lint:go",
+  "lint:shell",
+  "lint:yaml",
+  "lint:python",
+  "lint:actions",
+  "lint:helm",
+  "lint:docker",
+]
+
+[tasks."lint:go"]
+description = "Lint Go files with golangci-lint"
+usage = '''arg "[files]" help="Go files to lint (defaults to the whole module)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+  golangci-lint run "$@"
+else
+  golangci-lint run
+fi
+'''
+
+[tasks."lint:shell"]
+description = "Lint shell scripts with ShellCheck and shfmt"
+usage = '''arg "[files]" help="Shell files to lint (defaults to tracked shell files)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+else
+  set -- $(git ls-files '*.sh')
+fi
+
+if [ "$#" -gt 0 ]; then
+  shellcheck "$@"
+  format_status=0
+  for file do
+    case "$file" in
+      .devcontainer/features/skaffold/install.sh|.github/actions/setup-atlas/setup-atlas.sh)
+        # These existing installers predate shfmt; do not rewrite them as part
+        # of introducing the lint task. ShellCheck still runs above.
+        ;;
+      *)
+        shfmt -d -i 2 -ci "$file" || format_status=$?
+        ;;
+    esac
+  done
+  exit "$format_status"
+fi
+'''
+
+[tasks."lint:yaml"]
+description = "Lint YAML files with yamllint"
+usage = '''arg "[files]" help="YAML files to lint (defaults to tracked YAML files)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+else
+  set -- $(git ls-files '*.yaml' '*.yml' \
+    ':(exclude)charts/atlas-operator/templates/**' \
+    ':(exclude)config/crd/bases/**')
+fi
+
+if [ "$#" -gt 0 ]; then
+  yamllint --strict "$@"
+fi
+'''
+
+[tasks."lint:python"]
+description = "Lint Python files with Ruff"
+usage = '''arg "[files]" help="Python files to lint (defaults to tracked Python files)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+else
+  set -- $(git ls-files '*.py')
+fi
+
+if [ "$#" -gt 0 ]; then
+  ruff check "$@"
+fi
+'''
+
+[tasks."lint:actions"]
+description = "Validate GitHub Actions workflows with actionlint"
+usage = '''arg "[files]" help="Workflow files to lint (defaults to all workflows)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+  actionlint -shellcheck= -pyflakes= "$@"
+else
+  actionlint -shellcheck= -pyflakes=
+fi
+'''
+
+[tasks."lint:helm"]
+description = "Lint the Atlas Operator Helm chart"
+run = "helm lint charts/atlas-operator"
+
+[tasks."lint:docker"]
+description = "Lint Dockerfiles with Hadolint"
+usage = '''arg "[files]" help="Dockerfiles to lint (defaults to tracked Dockerfiles)" var=#true var_min=0'''
+run = '''
+if [ -n "${usage_files:-}" ]; then
+  eval "set -- $usage_files"
+else
+  set -- $(git ls-files 'Dockerfile*' '**/Dockerfile*' \
+    ':(exclude)Dockerfile.cross' ':(exclude)**/Dockerfile.cross')
+fi
+
+if [ "$#" -gt 0 ]; then
+  hadolint "$@"
+fi
+'''
+
+[tasks."hk:install"]
+description = "Install hk git hooks"
+run = "hk install"
+
+[tasks."hk:check"]
+description = "Run hk checks"
+run = "hk check"

@@ -1,0 +1,46 @@
+amends "package://github.com/jdx/hk/releases/download/v1.55.0/hk@1.55.0#/Config.pkl"
+
+local lintSteps = new Mapping<String, Step> {
+    ["lint-go"] {
+        glob = "**/*.go"
+        check = "mise run lint:go -- {{files}}"
+    }
+    ["lint-shell"] {
+        glob = "**/*.sh"
+        check = "mise run lint:shell -- {{files}}"
+    }
+    ["lint-yaml"] {
+        glob = "**/*.{yaml,yml}"
+        exclude = List(
+            "charts/atlas-operator/templates/**",
+            "config/crd/bases/**",
+        )
+        check = "mise run lint:yaml -- {{files}}"
+    }
+    ["lint-python"] {
+        glob = "**/*.py"
+        check = "mise run lint:python -- {{files}}"
+    }
+    ["lint-actions"] {
+        glob = List(".github/workflows/**/*.yaml", ".github/workflows/**/*.yml")
+        check = "mise run lint:actions -- {{files}}"
+    }
+    ["lint-helm"] {
+        glob = "charts/atlas-operator/**"
+        check = "mise run lint:helm"
+    }
+    ["lint-docker"] {
+        glob = List("Dockerfile", "**/Dockerfile*")
+        exclude = "Dockerfile.cross"
+        check = "mise run lint:docker -- {{files}}"
+    }
+}
+
+hooks {
+    ["pre-commit"] {
+        steps = lintSteps
+    }
+    ["check"] {
+        steps = lintSteps
+    }
+}

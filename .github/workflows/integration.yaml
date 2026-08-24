@@ -26,8 +26,20 @@ jobs:
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version-file: "go.mod"
-      - name: Install Atlas CLI for baseline tests
-        uses: ariga/setup-atlas@747818cc9a4d896aae962ffdde7015337930a4c9 # master
+      - name: Install verified Atlas fork CLI
+        uses: ./.github/actions/setup-atlas
+        with:
+          repository: esafak/atlas
+          release: dev
+          commit: e54a654eed4814304cf4d119a5e413bc61007755
+          asset-base: https://github.com/esafak/atlas/releases/download/dev
+          amd64-sha256: 6edb6029e84f2cc9041d19e3d13e731d450caceff7b787e0922654163d5b73d8
+          arm64-sha256: 6ab57289c0334100e986089e29ffd2f0d0964167a0b5a9cbcf6163d7a61cf95d
+          cosign-version: v2.6.3
+          cosign-identity: '^https://github\.com/esafak/atlas/\.github/workflows/cli-prerelease_oss\.yaml@refs/heads/dev$'
+          cosign-oidc-issuer: https://token.actions.githubusercontent.com
+      - name: Check Atlas pin consistency
+        run: make check-atlas-pin
       - name: Generate
         run: |
           make cli-gen

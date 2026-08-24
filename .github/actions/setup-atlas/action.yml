@@ -1,0 +1,62 @@
+# Copyright 2026 The Atlas Operator Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Setup Atlas (fork)
+description: Install and verify the pinned esafak/atlas CLI artifact.
+author: Atlas Operator Authors
+inputs:
+  repository:
+    description: GitHub repository containing the Atlas release.
+    required: true
+  release:
+    description: GitHub release containing the Atlas artifact.
+    required: true
+  commit:
+    description: Expected Atlas commit embedded in the binary version.
+    required: true
+  asset-base:
+    description: Base URL for Atlas release assets.
+    required: true
+  amd64-sha256:
+    description: SHA-256 of the Linux amd64 Atlas binary.
+    required: true
+  arm64-sha256:
+    description: SHA-256 of the Linux arm64 Atlas binary.
+    required: true
+  cosign-version:
+    description: Pinned Cosign release used for bundle verification.
+    required: true
+  cosign-identity:
+    description: Expected Fulcio certificate identity regexp.
+    required: true
+  cosign-oidc-issuer:
+    description: Expected Fulcio OIDC issuer.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Install verified Atlas fork artifact
+      shell: bash
+      env:
+        ATLAS_REPOSITORY: ${{ inputs.repository }}
+        ATLAS_RELEASE: ${{ inputs.release }}
+        ATLAS_COMMIT: ${{ inputs.commit }}
+        ATLAS_ASSET_BASE: ${{ inputs.asset-base }}
+        ATLAS_AMD64_SHA256: ${{ inputs.amd64-sha256 }}
+        ATLAS_ARM64_SHA256: ${{ inputs.arm64-sha256 }}
+        COSIGN_VERSION: ${{ inputs.cosign-version }}
+        COSIGN_IDENTITY: ${{ inputs.cosign-identity }}
+        COSIGN_OIDC_ISSUER: ${{ inputs.cosign-oidc-issuer }}
+      run: |
+        bash "$GITHUB_ACTION_PATH/setup-atlas.sh"

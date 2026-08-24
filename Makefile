@@ -243,6 +243,10 @@ license: addlicense ## Add license headers to all files.
 .PHONY: cli-gen
 cli-gen: generate manifests chart-manifests license
 
+.PHONY: check-atlas-pin
+check-atlas-pin: ## Check that CI and image Atlas pins are identical.
+	bash .github/scripts/check-atlas-pin.sh
+
 .PHONY: chart-manifests
 chart-manifests: manifests license kustomize
 	@echo '{{- if .Values.crds.create }}' > charts/atlas-operator/templates/crds/crd.yaml
