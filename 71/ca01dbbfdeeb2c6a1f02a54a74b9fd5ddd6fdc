@@ -1,0 +1,22 @@
+.github/actions/setup-atlas/action.yml
+  h_ea91e2db23540f 1-62
+.github/actions/setup-atlas/setup-atlas.sh
+  h_ea91e2db23540f 1-54
+.github/scripts/check-atlas-pin.sh
+  h_ea91e2db23540f 1-84
+.github/workflows/integration.yaml
+  h_ea91e2db23540f 29-42
+Makefile
+  h_ea91e2db23540f 246-249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "71ca01dbbfdeeb2c6a1f02a54a74b9fd5ddd6fdc",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
