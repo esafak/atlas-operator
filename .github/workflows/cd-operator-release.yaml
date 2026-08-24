@@ -84,7 +84,7 @@ jobs:
           tags: |
             type=sha,format=short,prefix=sha-
           labels: |
-            io.ariga.atlas.version=dev-e42e9a7cc6a036507133bf0a99ec81489a08894f
+            io.ariga.atlas.version=dev-e54a654eed4814304cf4d119a5e413bc61007755
             io.ariga.atlas.channel=mutable-test
             org.opencontainers.image.title=atlas-operator
             org.opencontainers.image.description=Atlas Operator
@@ -98,10 +98,10 @@ jobs:
           build-args: |
             ATLAS_REPOSITORY=esafak/atlas
             ATLAS_RELEASE=dev
-            ATLAS_COMMIT=e42e9a7cc6a036507133bf0a99ec81489a08894f
+            ATLAS_COMMIT=e54a654eed4814304cf4d119a5e413bc61007755
             ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
-            ATLAS_AMD64_SHA256=9241d2aee4827646a2f907f358780fd431ac1a7c4f06839a22f0a021357ad1e5
-            ATLAS_ARM64_SHA256=cd570a4946c580eb7972b6597dd944f7f713fe0c684adf783b27ebf2cce55cc2
+            ATLAS_AMD64_SHA256=6edb6029e84f2cc9041d19e3d13e731d450caceff7b787e0922654163d5b73d8
+            ATLAS_ARM64_SHA256=6ab57289c0334100e986089e29ffd2f0d0964167a0b5a9cbcf6163d7a61cf95d
             OPERATOR_VERSION=${{ needs.detect-version.outputs.version }}
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
