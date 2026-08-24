@@ -1,0 +1,19 @@
+.github/scripts/check-atlas-pin.sh
+  s_9d872793085d91::t_45a4c83d657ab7 60-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "d5a7e8f8cd58149be5b8a7fd6862bb11c7227dec",
+  "prompts": {},
+  "sessions": {
+    "s_9d872793085d91": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcbca3766ffecElelEjzriED1y",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
