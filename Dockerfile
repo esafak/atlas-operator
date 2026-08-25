@@ -45,10 +45,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
     go install github.com/sigstore/cosign/v2/cmd/cosign@v2.6.3
 ARG ATLAS_REPOSITORY=esafak/atlas
 ARG ATLAS_RELEASE=dev
-ARG ATLAS_COMMIT=11eba1dd5793a6c869e667ffbe8d49fc72c498a4
+ARG ATLAS_COMMIT=be4181b846a6c6c967c02a5abc6124f9e06f5537
 ARG ATLAS_ASSET_BASE=https://github.com/esafak/atlas/releases/download/dev
-ARG ATLAS_AMD64_SHA256=70a5e4b509832d4068ba537d0a1b0c05f302d68c771382613f5676efa9236cda
-ARG ATLAS_ARM64_SHA256=5838d36d4dbb8f131019b03d69c44fdcacbde82787cd2af4edbd88b1261b2eed
+ARG ATLAS_AMD64_SHA256=82519d621a4e27b16d39d2f9f04c0917e58a5056521618cda01dbfeb31e1bdc9
+ARG ATLAS_ARM64_SHA256=a8ff00d18c7337d7374e5c274832df009a72ab316b367e07054763debbeda4e4
 ARG TARGETARCH
 RUN set -eux; \
     case "${TARGETARCH}" in amd64) sha="${ATLAS_AMD64_SHA256}";; arm64) sha="${ATLAS_ARM64_SHA256}";; *) echo "unsupported TARGETARCH=${TARGETARCH}; Atlas publishes only amd64 and arm64" >&2; exit 1;; esac; \
