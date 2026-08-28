@@ -12,7 +12,7 @@ This repository uses `dev` as the effective main branch. The upstream
 2. Run `mise run update:dev` from the operator repository. The updater reads
    the latest `dev` release metadata with `gh`, independently downloads and
    hashes both Linux binaries, then refreshes every checked-in pin consumer.
-   Use `mise run update:dev -- --dry-run` to inspect the candidate without
+   Use `mise run update:dev --dry-run` to inspect the candidate without
    changing files.
 3. Run `make check-atlas-pin` and the integration unit tests before pushing.
    A new Atlas artifact can change SQL output formatting even when schema
