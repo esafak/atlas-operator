@@ -31,10 +31,10 @@ jobs:
         with:
           repository: esafak/atlas
           release: dev
-          commit: a72a8024ff787fac9e3b6013c8451844c338bbab
+          commit: 777540c037a023f91c2682581cd96275a4540c08
           asset-base: https://github.com/esafak/atlas/releases/download/dev
-          amd64-sha256: b06caf431873d0a98c486a79aa19513e20158ef7af070a90a80677e1e9b3d20a
-          arm64-sha256: 123ea6a4cef11002ebb1a5b84f7f051190f04cd7f27b2da7199b0881db4cfd9e
+          amd64-sha256: f8215264016db355ab56b2a8c8eca1a05bebcea9d7c380907ad5da126c9870f4
+          arm64-sha256: 689deeff2db920bb6ba8662c62d3268af98ba53b37323481dc9a7c19b4f4ff25
           cosign-version: v2.6.3
           cosign-identity: '^https://github\.com/esafak/atlas/\.github/workflows/cli-prerelease_oss\.yaml@refs/heads/dev$'
           cosign-oidc-issuer: https://token.actions.githubusercontent.com
