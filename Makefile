@@ -1,9 +1,9 @@
 ATLAS_REPOSITORY ?= esafak/atlas
 ATLAS_RELEASE ?= dev
-ATLAS_COMMIT ?= a72a8024ff787fac9e3b6013c8451844c338bbab
+ATLAS_COMMIT ?= 777540c037a023f91c2682581cd96275a4540c08
 ATLAS_ASSET_BASE ?= https://github.com/$(ATLAS_REPOSITORY)/releases/download/$(ATLAS_RELEASE)
-ATLAS_AMD64_SHA256 ?= b06caf431873d0a98c486a79aa19513e20158ef7af070a90a80677e1e9b3d20a
-ATLAS_ARM64_SHA256 ?= 123ea6a4cef11002ebb1a5b84f7f051190f04cd7f27b2da7199b0881db4cfd9e
+ATLAS_AMD64_SHA256 ?= f8215264016db355ab56b2a8c8eca1a05bebcea9d7c380907ad5da126c9870f4
+ATLAS_ARM64_SHA256 ?= 689deeff2db920bb6ba8662c62d3268af98ba53b37323481dc9a7c19b4f4ff25
 
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
@@ -246,6 +246,10 @@ cli-gen: generate manifests chart-manifests license
 .PHONY: check-atlas-pin
 check-atlas-pin: ## Check that CI and image Atlas pins are identical.
 	bash .github/scripts/check-atlas-pin.sh
+
+.PHONY: update-atlas-pin
+update-atlas-pin: ## Update the pinned Atlas dev release and verify its assets.
+	python3 .github/scripts/update-atlas-pin.py $(if $(filter-out 0,$(DRY_RUN)),--dry-run,)
 
 .PHONY: chart-manifests
 chart-manifests: manifests license kustomize
