@@ -1,0 +1,31 @@
+.github/scripts/update-atlas-pin.py
+  s_6075cebd9b4f3e::t_f7607c50df5bab 1-178
+.github/workflows/cd-image-canary-release.yaml
+  s_6075cebd9b4f3e::t_e8ef0d073384c1 57,71,73
+.github/workflows/cd-operator-release.yaml
+  s_6075cebd9b4f3e::t_3f531e982602a9 87,101,103-104
+.github/workflows/integration.yaml
+  s_6075cebd9b4f3e::t_9b00d5c34bb1ec 34,36-37
+Dockerfile
+  s_6075cebd9b4f3e::t_e9edb37dbc96c0 48,50-51
+Makefile
+  s_6075cebd9b4f3e::t_6b458e58e04f15 3,5-6,250-253
+mise.lock
+  s_6075cebd9b4f3e::t_c1e4f007fa1730 49-140,299-337
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9d6944930174b6dd9c7b8f2e6d6e6c4804380554",
+  "prompts": {},
+  "sessions": {
+    "s_6075cebd9b4f3e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb7400e94ffeJCcxXwwC7K0kkN",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
