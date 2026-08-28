@@ -1,0 +1,14 @@
+.github/scripts/update-atlas-pin.py
+  h_ea91e2db23540f 45,60,81,104-112,114,141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f94a29512d660d0e0ab0165bbbbe91162f7fac32",
+  "prompts": {},
+  "humans": {
+    "h_ea91e2db23540f": {
+      "author": "Emre Şafak <3928300+esafak@users.noreply.github.com>"
+    }
+  }
+}
