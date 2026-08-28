@@ -42,6 +42,7 @@ FILES = [
 
 
 def release_metadata(repository: str, release: str) -> dict:
+    """Fetch and decode metadata for a GitHub release tag."""
     try:
         output = subprocess.check_output(
             ["gh", "api", f"repos/{repository}/releases/tags/{release}"],
@@ -56,6 +57,7 @@ def release_metadata(repository: str, release: str) -> dict:
 
 
 def asset_digest(asset: dict, repository: str, release: str, destination: Path) -> str:
+    """Download an asset and verify it against GitHub's published digest."""
     name = asset["name"]
     expected = asset.get("digest", "")
     if not expected.startswith("sha256:"):
@@ -76,6 +78,7 @@ def asset_digest(asset: dict, repository: str, release: str, destination: Path) 
 
 
 def verify_signature(binary: Path, bundle: Path) -> None:
+    """Verify a binary's keyless Cosign signature and workflow identity."""
     try:
         subprocess.run(
             [
@@ -98,7 +101,17 @@ def verify_signature(binary: Path, bundle: Path) -> None:
         raise SystemExit(f"Cosign verification failed for {binary.name}")
 
 
+def verify_binary_commit(binary: Path, commit: str) -> None:
+    """Verify the binary embeds the source commit reported by the release."""
+    expected = f"dev-{commit}".encode()
+    versions = set(re.findall(rb"dev-[0-9a-f]{40}", binary.read_bytes()))
+    if versions != {expected}:
+        found = ", ".join(version.decode() for version in sorted(versions)) or "none"
+        raise SystemExit(f"{binary.name} embeds {found}; expected dev-{commit}")
+
+
 def main() -> None:
+    """Verify the latest Atlas dev assets and update all checked-in consumers."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", default="esafak/atlas")
     parser.add_argument("--release", default="dev")
@@ -125,6 +138,7 @@ def main() -> None:
             bundle = temporary / f"{name}.bundle"
             hashes[architecture] = asset_digest(assets[name], args.repository, args.release, binary)
             asset_digest(assets[f"{name}.bundle"], args.repository, args.release, bundle)
+            verify_binary_commit(binary, commit)
             verify_signature(binary, bundle)
 
     values = {
