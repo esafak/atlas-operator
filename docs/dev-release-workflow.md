@@ -9,10 +9,10 @@ This repository uses `dev` as the effective main branch. The upstream
    `dev` release containing amd64/arm64 binaries, checksums, and Cosign
    bundles. The amd64 binary must be built with CGO enabled because the
    operator's host-side unit tests exercise SQLite through `go-sqlite3`.
-2. Run `make update-atlas-pin` from the operator repository. The updater reads
+2. Run `mise run update:dev` from the operator repository. The updater reads
    the latest `dev` release metadata with `gh`, independently downloads and
    hashes both Linux binaries, then refreshes every checked-in pin consumer.
-   Use `make update-atlas-pin DRY_RUN=1` to inspect the candidate without
+   Use `mise run update:dev -- --dry-run` to inspect the candidate without
    changing files.
 3. Run `make check-atlas-pin` and the integration unit tests before pushing.
    A new Atlas artifact can change SQL output formatting even when schema

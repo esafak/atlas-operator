@@ -247,10 +247,6 @@ cli-gen: generate manifests chart-manifests license
 check-atlas-pin: ## Check that CI and image Atlas pins are identical.
 	bash .github/scripts/check-atlas-pin.sh
 
-.PHONY: update-atlas-pin
-update-atlas-pin: ## Update the pinned Atlas dev release and verify its assets.
-	python3 .github/scripts/update-atlas-pin.py $(if $(filter-out 0,$(DRY_RUN)),--dry-run,)
-
 .PHONY: chart-manifests
 chart-manifests: manifests license kustomize
 	@echo '{{- if .Values.crds.create }}' > charts/atlas-operator/templates/crds/crd.yaml
